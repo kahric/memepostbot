@@ -34,7 +34,7 @@ class PostMemeCommand extends Command
             ->setDescription('Posts the oldest (by upload) meme with most upvotes.')
             ->addArgument('meme_id', InputArgument::OPTIONAL, "ID of a meme that should be posted.")
             ->addOption('reupload', 'r', InputOption::VALUE_NONE, 'If the meme is already uploaded, post it again using this option.')
-            ->addOption('verbose', 'v', InputOption::VALUE_NONE, 'Verbose mode')
+            ->addOption('ig_verbose', 'd', InputOption::VALUE_NONE, 'Debug mode for IG API')
         ;
     }
 
@@ -51,7 +51,7 @@ class PostMemeCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        if($input->getOption('verbose')) {
+        if($input->getOption('ig_verbose')) {
             self::$debug = true;
         }
 
