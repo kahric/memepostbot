@@ -69,9 +69,6 @@ class PostMemeCommand extends Command
             $meme = $re->find($meme_id);
         } else {
             $memes = $re->findBy(['uploaded' => false]);
-            usort($memes, function ($a, $b) {
-                return $b->getUpvotes()->count() <=> $a->getUpvotes()->count();
-            });
             if(count($memes) == 0) {
                 $io->error("No memes in queue found!");
                 exit();
