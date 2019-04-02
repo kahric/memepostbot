@@ -20,7 +20,7 @@ class PostMemeCommand extends Command
         /////// CONFIG ///////
     private $username;
     private $password;
-    private static $debug = true;
+    private static $debug = false;
     private static $truncatedDebug = true;
 
     /**
@@ -34,6 +34,7 @@ class PostMemeCommand extends Command
             ->setDescription('Posts the oldest (by upload) meme with most upvotes.')
             ->addArgument('meme_id', InputArgument::OPTIONAL, "ID of a meme that should be posted.")
             ->addOption('reupload', 'r', InputOption::VALUE_NONE, 'If the meme is already uploaded, post it again using this option.')
+            ->addOption('verbose', 'v', InputOption::VALUE_NONE, 'Verbose mode')
         ;
     }
 
@@ -50,6 +51,9 @@ class PostMemeCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
+        if($input->getOption('verbose')) {
+            self::$debug = true;
+        }
 
         $ig = new \InstagramAPI\Instagram(self::$debug, self::$truncatedDebug);
         try {
@@ -81,8 +85,6 @@ class PostMemeCommand extends Command
             $meme = $memes[0];
         }
 
-        $io->comment("Found a meme!");
-        exit();
 
         if(!$meme) {
             $io->error("Meme with ID of \"" . $meme_id . "\" could not be found.");
