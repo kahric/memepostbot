@@ -166,7 +166,7 @@ class MemeController extends AbstractController
         $this->denyAccessUnlessGranted('ROLE_USER');
 
         $repository = $this->getDoctrine()->getRepository(Meme::class);
-        $memes = $repository->findAll();
+        $memes = $repository->findBy(['uploaded' => false]);
 
         usort($memes, function ($a, $b) {
             return $b->getUpvotes()->count() <=> $a->getUpvotes()->count();
