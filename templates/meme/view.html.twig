@@ -40,8 +40,7 @@
 
                                 <div class="d-flex" data-voteblock="{{ meme.id }}">
                                     <button class="btn btn-lg vote btn-success {% if vote and vote.value == 'upvote' %}active{% elseif vote and vote.value == 'downvote' %} disabled{% endif %}" data-action="up" ><i class="fa fa-thumbs-up"></i></button>
-                                    <button class="btn btn-lg btn-secondary disabled mx-1 count" disabled>{{ meme.getVoteCount }}</button>
-                                    <button class="btn btn-lg vote btn-danger {% if vote and vote.value == 'downvote' %}active{% elseif vote and vote.value == 'upvote' %} disabled{% endif %}" data-action="down"><i class="fa fa-thumbs-down"></i></button>
+                                    <button class="btn btn-lg btn-secondary disabled mx-1 count" disabled>{{ meme.upvotes.count }}</button>
                                 </div>
 
                             </div>
@@ -75,32 +74,17 @@
             {% if meme.uploaded %}
             alert("This meme has already been uploaded to Instagram, voting is disabled.");
             {% else %}
-            $('div[data-voteblock="{{ meme.id }}"]').find('.count').html('<i class="fas fa-spinner spinning"></i>');
-
-            var $upvote_btn = $(".vote[data-action='up']");
-            var $downvote_btn = $(".vote[data-action='down']");
+            $('div[data-voteblock="{{ meme.id }}"]').find('.count').html('<i class="fas fa-spinner fa-spin"></i>');
 
             $.ajax(url, {
                 method: 'POST',
                 dataType: 'JSON',
                 success: function (data) {
                     if(data.status === true) {
-                        if(vote_button.hasClass('active') && data.revoke === true) {
-                            if(action === 'up') {
-                                $upvote_btn.removeClass('active');
-                                $downvote_btn.removeClass('disabled');
-                            } else {
-                                $upvote_btn.removeClass('disabled');
-                                $downvote_btn.removeClass('active');
-                            }
+                        if(data.revoke === true) {
+                            vote_button.removeClass('active');
                         } else {
-                            if(action === 'up') {
-                                $upvote_btn.removeClass('disabled').addClass('active');
-                                $downvote_btn.removeClass('active').addClass('disabled');
-                            } else {
-                                $upvote_btn.removeClass('active').addClass('disabled');
-                                $downvote_btn.removeClass('disabled').addClass('active');
-                            }
+                            vote_button.addClass('active');
                         }
                         $('div[data-voteblock="{{ meme.id }}"]').find('.count').html(data.count);
                     }

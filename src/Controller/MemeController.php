@@ -79,7 +79,7 @@ class MemeController extends AbstractController
             $entityManager->persist($meme);
             $entityManager->flush();
 
-            // return $this->redirectToRoute('meme_add');
+            return $this->redirectToRoute('meme_view', ['id' => $meme->getId()]);
         }
 
         return $this->render('meme/add.html.twig', [
@@ -96,7 +96,7 @@ class MemeController extends AbstractController
         $this->denyAccessUnlessGranted('ROLE_USER');
 
         $meme_repository = $this->getDoctrine()->getRepository(Meme::class);
-        $vote_repository = $this->getDoctrine()->getRepository(Vote::class);
+        $vote_repository = $this->getDoctrine()->getRepository(Upvote::class);
 
         $meme = $meme_repository->find($id);
         $vote = $vote_repository->findOneBy([
