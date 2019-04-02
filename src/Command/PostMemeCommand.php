@@ -20,7 +20,7 @@ class PostMemeCommand extends Command
         /////// CONFIG ///////
     private $username;
     private $password;
-    private static $debug = false;
+    private static $debug = true;
     private static $truncatedDebug = true;
 
     /**
@@ -73,8 +73,16 @@ class PostMemeCommand extends Command
                 $io->error("No memes in queue found!");
                 exit();
             }
+
+            usort($memes, function ($a, $b) {
+                return $b->getUpvotes()->count() <=> $a->getUpvotes()->count();
+            });
+
             $meme = $memes[0];
         }
+
+        $io->comment("Found a meme!");
+        exit();
 
         if(!$meme) {
             $io->error("Meme with ID of \"" . $meme_id . "\" could not be found.");
