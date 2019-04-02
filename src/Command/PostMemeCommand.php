@@ -92,10 +92,6 @@ class PostMemeCommand extends Command
         }
 
         if(!$meme->getUploaded()) {
-            $image_path = str_replace("\\", "/", $this->path . "/public" . $meme->getImage());
-            $photo = new \InstagramAPI\Media\Photo\InstagramPhoto($image_path);
-            $ig->timeline->uploadPhoto($photo->getFile(), ['caption' => $meme->getCaption()]);
-
             $meme->setUploaded(true);
             $meme->setUploadedAt(new \DateTime('now'));
             $em->persist($meme);
