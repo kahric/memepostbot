@@ -5,6 +5,8 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: 'en'
+    app.path.meme_images: /uploads/images/memes
+    app.path.upload_destination: '%kernel.project_dir%/public%app.path.meme_images%'
 
 services:
     # default configuration for services in *this* file
@@ -26,3 +28,9 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+    App\Command\PostMemeCommand:
+        arguments:
+            $path: '%kernel.project_dir%'
+    App\Controller\InstagramController:
+        arguments:
+            $path: '%kernel.project_dir%'

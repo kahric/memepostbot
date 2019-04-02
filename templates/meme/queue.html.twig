@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Upload queue{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+    <!-- Content Row -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow mb-4">
+                <div class="card-body">
+                    <table class="table table-bordered table-responsive">
+                        <thead>
+                            <th>
+                                #
+                            </th>
+                            <th width="20%">
+                                Meme image
+                            </th>
+                            <th>
+                                Caption
+                            </th>
+                            <th>
+                                Will be uploaded on
+                            </th>
+                        </thead>
+                        </tbody>
+                    {% for meme in memes %}
+                        {% set voted = "none" %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td><img src="{{ meme.image }}" alt="Meme image" class="img-fluid" draggable="false"></td>
+                                <td>{{ meme.caption }}</td>
+                                <td>{{ "now"|date_modify("+" ~ loop.index ~ " hour")|date("Y-m-d H:00:00") }}</td>
+                            </tr>
+                    {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block javascripts %}
+
+{% endblock %}

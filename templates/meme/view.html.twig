@@ -1,0 +1,114 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Preview meme{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+
+
+        <!-- Content Row -->
+        <div class="row">
+
+            <!-- Content Column -->
+            <div class="col-lg-12 mb-4">
+                <!-- Project Card Example -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3 d-flex justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary">Meme preview</h6>
+                        {% if not meme.uploaded %}<a href="{{ url('instagram_post', {meme_id: meme.id, csrf_token: csrf_token('instagram_post')}) }}" class="badge badge-success">Post to Instagram</a>{% endif %}
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <img src="{{ meme.getImage }}" alt="Meme image" class="img-fluid">
+                            </div>
+                            <div class="col-lg-6">
+                                <div>{% if meme.uploaded %}<span class="badge badge-success">Uploaded</span><hr>{% endif %}</div>
+                                <div>
+                                    <strong>Uploaded by:</strong>
+                                    <p><u>{{ meme.createdBy.username }}</u> on {{ meme.updatedAt|date('d. m. Y') }} at {{ meme.updatedAt|date('H:i') }}</p>
+                                </div>
+                                {% if meme.uploaded %}
+                                    <div>
+                                        <strong>Uploaded at:</strong>
+                                        <p>{{ meme.uploadedAt|date('d. m. Y') }} at {{ meme.uploadedAt|date('H:i') }}</p>
+                                    </div>
+                                {% endif %}
+                                <strong>Caption:</strong>
+                                <p>{{ meme.caption }}</p>
+                                <hr>
+
+                                <div class="d-flex" data-voteblock="{{ meme.id }}">
+                                    <button class="btn btn-lg vote btn-success {% if vote and vote.value == 'upvote' %}active{% elseif vote and vote.value == 'downvote' %} disabled{% endif %}" data-action="up" ><i class="fa fa-thumbs-up"></i></button>
+                                    <button class="btn btn-lg btn-secondary disabled mx-1 count" disabled>{{ meme.getVoteCount }}</button>
+                                    <button class="btn btn-lg vote btn-danger {% if vote and vote.value == 'downvote' %}active{% elseif vote and vote.value == 'upvote' %} disabled{% endif %}" data-action="down"><i class="fa fa-thumbs-down"></i></button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+
+
+        </div>
+
+    </div>
+
+    <style>
+        .btn:focus {
+            box-shadow: none !important;
+        }
+    </style>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        $(".vote").click(function () {
+            let vote_button = $(this);
+            let action = vote_button.data('action');
+            let url = action === "up" ? "{{ url('meme_vote', {action: "up", id: meme.id}) }}" : "{{ url('meme_vote', {action: "down", id: meme.id}) }}";
+
+            {% if meme.uploaded %}
+            alert("This meme has already been uploaded to Instagram, voting is disabled.");
+            {% else %}
+            $('div[data-voteblock="{{ meme.id }}"]').find('.count').html('<i class="fas fa-spinner spinning"></i>');
+
+            var $upvote_btn = $(".vote[data-action='up']");
+            var $downvote_btn = $(".vote[data-action='down']");
+
+            $.ajax(url, {
+                method: 'POST',
+                dataType: 'JSON',
+                success: function (data) {
+                    if(data.status === true) {
+                        if(vote_button.hasClass('active') && data.revoke === true) {
+                            if(action === 'up') {
+                                $upvote_btn.removeClass('active');
+                                $downvote_btn.removeClass('disabled');
+                            } else {
+                                $upvote_btn.removeClass('disabled');
+                                $downvote_btn.removeClass('active');
+                            }
+                        } else {
+                            if(action === 'up') {
+                                $upvote_btn.removeClass('disabled').addClass('active');
+                                $downvote_btn.removeClass('active').addClass('disabled');
+                            } else {
+                                $upvote_btn.removeClass('active').addClass('disabled');
+                                $downvote_btn.removeClass('disabled').addClass('active');
+                            }
+                        }
+                        $('div[data-voteblock="{{ meme.id }}"]').find('.count').html(data.count);
+                    }
+                }
+            });
+            {% endif %}
+
+
+        });
+    </script>
+{%  endblock %}
