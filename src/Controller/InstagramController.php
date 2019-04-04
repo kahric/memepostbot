@@ -92,17 +92,13 @@ class InstagramController extends AbstractController
         echo "<h1>{$array->name}</h1>";
 
         foreach($array->childrenItems as $child) {
-            echo $line = $child->name . ":" . $child->id . ":" . ($child->children ? '1' : '0');
+            echo $line = ($child->children ? '<strong>' : '') . $child->name . ":" . $child->id . ":" . ($child->children ? '1' : '0') . ($child->children ? '</strong>' : '');
             echo "<br>";
             $output .= $line ."\r\n";
         }
 
-        $subfolder = explode(', ', $array->name);
-        $subfoldername = count($subfolder) > 1 ? $subfolder[1] . '/' : '';
-
-
         try {
-            $output_file = $scrapes_dir  . "England/" . $subfoldername . $array->name . '.txt';
+            $output_file = $scrapes_dir  . "categories/" . $array->name . '.txt';
             $fileSystem->dumpFile($output_file, $output);
 
         } catch (IOExceptionInterface $exception) {
