@@ -137,7 +137,7 @@ class MemeController extends AbstractController
             ]);
         }
 
-        $already_upvoted = $upvote_repository->findOneBy(['meme' => $meme]);
+        $already_upvoted = $upvote_repository->findOneBy(['meme' => $meme, 'created_by' => $user]);
 
         if($already_upvoted) {
             $entityManager->remove($already_upvoted);
